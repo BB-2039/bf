@@ -1,0 +1,11 @@
+* BF
+
+** Introduction
+
+BF is an interpreter for the esolang [[https://en.wikipedia.org/wiki/Brainfuck]['brainfu*k']]
+
+** Implementation details
+
+- Tape Size: 30000
+- Cell Range: the same as ~char~
+- EOF leaves the values unchanged
