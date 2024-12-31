@@ -1,3 +1,22 @@
+/* The main file for the brainf*ck interpreter
+   Copyright (C) 2025 Mitchell <mitchell@segfault.net>
+
+This file is part of BF.
+
+BF is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free
+Software Foundation; either version 3, or (at your option) any later
+version.
+
+BF is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+for more details.
+
+You should have received a copy of the GNU General Public License
+along with BF; see the file LICENSE.  If not see
+<http://www.gnu.org/licenses/>.  */
+
 #include <stdio.h>
 #include <assert.h>
 #include <getopt.h>
@@ -8,12 +27,14 @@
 #define TAPESIZE 30000
 #define MAXLINE 30000
 
+int __brackets[MAXLINE];
 int __tape[TAPESIZE];
 int __src_ptr = 0;
 
 void print_help();
 void reset();
-void eval(char src[]);
+void validate(char src[]);
+void eval(char src[], int length);
 void bf2c(char input_filename[], char output_filename[]);
 
 int main(int argc, char *argv[])
@@ -27,7 +48,9 @@ int main(int argc, char *argv[])
 	{
 	    strcat(src, line);
 	}
-	eval(src);
+	int length = sizeof(src) / sizeof(char);
+	validate(src);
+	eval(src, length);
     }
     
     static struct option long_options[] =
@@ -47,7 +70,6 @@ int main(int argc, char *argv[])
 	    exit(EXIT_SUCCESS);
 	case 'f':
 	    reset();
-	    // printf("option F hit!\n");
 	    if (optind + 1 == argc)
 	    {
 		FILE *file = fopen(argv[optind], "r");
@@ -62,7 +84,8 @@ int main(int argc, char *argv[])
 		}
 		src[len] = '\0';
 		fclose(file);
-		eval(src);
+		validate(src);
+		eval(src, len);
 		exit(EXIT_SUCCESS);
 	    }
 	    else
@@ -108,12 +131,50 @@ void reset()
     {
 	__tape[i] = 0;
     }
+
+    for (int i = 0; i < MAXLINE; i++)
+    {
+	__brackets[i] = 0;
+    }
     __src_ptr = 0;
 }
 
-void eval(char src[])
+void validate(char src[])
 {
-    for (int i = 0; src[i] != '\0' && (unsigned long)i < strlen(src); i++)
+    int stack[MAXLINE];
+    int top = -1;
+    
+    memset(__brackets, -1, sizeof(__brackets));
+    
+    for (int i = 0; src[i] != '\0'; i++)
+    {
+	if (src[i] == '[')
+	{
+	    stack[++top] = i;
+	}
+	else if (src[i] == ']')
+	{
+	    if (top < 0)
+	    {
+		fprintf(stderr, "Error: unmatched ']' at position %d\n", i);
+		exit(EXIT_FAILURE);
+	    }
+	    int pos = stack[top--];
+	    __brackets[pos] = i;
+	    __brackets[i] = pos;
+	}
+    }
+
+    if (top >= 0)
+    {
+	fprintf(stderr, "Error: unmatched '[' at position %d\n", stack[top]);
+	exit(EXIT_FAILURE);
+    }
+}
+
+void eval(char src[], int length)
+{
+    for (int i = 0; src[i] != '\0' && i < length; i++)
     {
 	switch (src[i])
 	{
@@ -136,35 +197,27 @@ void eval(char src[])
 	    __src_ptr--;
 	    break;
 	case ',':
-	    __tape[__src_ptr] = getchar();
+	{
+	    int c = getchar();
+	    if (c != EOF)
+	    {
+		__tape[__src_ptr] = c;
+	    }
 	    break;
+	}
 	case '.':
 	    putchar(__tape[__src_ptr]);
 	    break;
 	case '[':
 	    if (__tape[__src_ptr] == 0)
 	    {
-		int bracket = 1;
-		while (bracket > 0)
-		{
-		    // assert((i > 0)&&(i < MAXLINE));
-		    i++;
-		    if (src[i] == '[') bracket++;
-		    if (src[i] == ']') bracket--;
-		}
+		i = __brackets[i];
 	    }
 	    break;
 	case ']':
 	    if (__tape[__src_ptr] != 0)
 	    {
-		int bracket = 1;
-		while (bracket > 0)
-		{
-		    // assert((i > 0)&&(i < MAXLINE));
-		    i--;
-		    if (src[i] == ']') bracket++;
-		    if (src[i] == '[') bracket--;
-		}
+		i = __brackets[i];
 	    }
 	    break;
 	default:
