@@ -22,9 +22,8 @@ along with BF; see the file LICENSE.  If not see
 #include <getopt.h>
 #include <stdlib.h>
 #include <string.h>
+#include "config.h"
 
-#define VERSION "0.1"
-#define TAPESIZE 30000
 #define MAXLINE 30000
 
 int __brackets[MAXLINE];
@@ -48,7 +47,7 @@ int main(int argc, char *argv[])
 	{
 	    strcat(src, line);
 	}
-	int length = sizeof(src) / sizeof(char);
+	int length = strlen(src);
 	validate(src);
 	eval(src, length);
     }
@@ -189,19 +188,54 @@ void eval(char src[], int length)
 		                   : __tape[__src_ptr] - 1;
 	    break;
 	case '>':
-	    assert(__src_ptr < TAPESIZE - 1);
-	    __src_ptr++;
+	    if (BOUNDS_ENABLED)
+	    {
+		assert(__src_ptr < TAPESIZE - 1);
+		__src_ptr++;
+	    }
+	    else
+	    {
+		if (__src_ptr == TAPESIZE - 1)
+		{
+		    __src_ptr = 0;
+		}
+		else
+		{
+		    __src_ptr++;
+		}
+	    }
 	    break;
 	case '<':
-	    assert(__src_ptr > 0);
-	    __src_ptr--;
+	    if (BOUNDS_ENABLED)
+	    {
+		assert(__src_ptr > 0);
+		__src_ptr--;
+	    }
+	    else
+	    {
+		if (__src_ptr == 0)
+		{
+		    __src_ptr = TAPESIZE - 1;
+		}
+		else
+		{
+		    __src_ptr--;
+		}		
+	    }
 	    break;
 	case ',':
 	{
-	    int c = getchar();
-	    if (c != EOF)
+	    char c = getchar();
+	    if (OMIT_EOF)
 	    {
-		__tape[__src_ptr] = c;
+		if (c != EOF)
+		{
+		    __tape[__src_ptr] = c;
+		}
+	    }
+	    else
+	    {    
+		__tape[__src_ptr] =  (c == EOF) ? EOF_NUM : c;	
 	    }
 	    break;
 	}
