@@ -1,5 +1,4 @@
 #include "_.h"
-C tp[sz]={0};I ptr=0;
-V ev(C*s){I l=o(strlen)(s);N(l,C10(s[i],tpr=(tpr==255)?0:tpr+1,tpr=(tpr==0)?255:tpr-1,$(ptr==sz-1,ptr=0){ptr++;},$(ptr==0,ptr=sz-1){ptr--;},{C c;sf("%c",&c);tpr=(c==-1)?0/*??*/:c;},pf("%c",tpr),$$(tpr==0,{I v=1;W(v&&++i<l){$(s[i]=='[',++v)$$(s[i]==']',--v)}}),$$(tpr!=0,{I v=1;W(v&&--i>=0){$(s[i]==']',++v)$$(s[i]=='[',--v)}}),pf("+-><,.[]\n"),{}))}
-V rp(){W(1){C s[sz]={0};sf("%s",s);ev(s);pf("\n");}}
-I main(){rp();R 0;}
+V ev(C*s){C m[sz],*n[sz],*r=s,*p=m,**sp=n,d=0,c;for(;(c=*r);r++) c-']'||(d>1||(r=*p?*sp:(--sp,r)),!d||d--),c-'['||d++||(*++sp=r),d||(*p+=c=='+',*p-=c=='-',p=c=='>'?(p+1==m+sz?m:p+1):(c=='<'?(p==m?m+sz-1:p-1):p),c-'.'||w_(1,p,1),c-','||_w(0,p,1));}
+V rp(){for(;;){C s[sz]={0};I n=_w(0,s,sz-1);$$(n<=0,break)$(s[n-1]=='\n',s[--n]='\0'){s[n]='\0';}ev(s);w_(1,"\n",1);}}
+I main(){rp();}
