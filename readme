@@ -1,3 +1,9 @@
+arch:
+    linux/x86-64
+    gcc/clang ok
+
+    tcc notok, wont fix
+
 lang
     ops: +- >< ,. [] |
                     man

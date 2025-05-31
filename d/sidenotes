@@ -1,0 +1,9 @@
+bench:
+    2048 digits of e
+    m1 ./e/e.b   m2 ./e/e.b
+    11.479s      9.542s       15% impv
+
+opti:
+    jump table/ir(a:++,b:+++,c:++++...)
+    C27(a,b....) switch(a){case 'a':{b;break;}...}
+    not planned, fast enough now
