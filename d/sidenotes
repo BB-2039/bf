@@ -1,7 +1,7 @@
 bench:
-    2048 digits of e
-    m1 ./e/e.b   m2 ./e/e.b
-    11.479s      9.542s       15% impv
+    2258 digits of e
+    m2 ./e/e.b   m3 ./e/e.b
+    14.248s      8.861s
 
 opti:
     jump table/ir(a:++,b:+++,c:++++...)
