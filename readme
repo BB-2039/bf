@@ -25,5 +25,8 @@ test
 repl
     ./m
 
+bootstrap
+    ./m ./b/b.b
+
 lic
     no license, uayor
