@@ -1,0 +1,10 @@
++   increment byte at data pointer
+-   decrement byte at data pointer
+>   increment data pointer
+<   decrement data pointer
+.   output byte at data pointer
+,   input byte and store at data pointer
+[   if byte at data pointer is zero:
+    jump to matching ]
+]   if byte at data pointer is nonzero:
+    jump to matching [
