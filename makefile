@@ -1,16 +1,4 @@
-CC      = gcc
-CFLAGS  = -O3 -fno-stack-protector -fno-builtin -ffreestanding -nostdlib
-LDFLAGS = -Wl,--gc-sections -Wl,--strip-all
-TARGET  = m
-OBJS    = m.o
-
-all: $(TARGET)
-
-%.o: %.c
-	$(CC) $(CFLAGS) -c -o $@ $<
-
-$(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(LDFLAGS) -o $@
-
-clean:
-	rm -f $(TARGET) $(OBJS)
+m:
+	gcc -O3 -fno-stack-protector -fno-builtin -ffreestanding -nostdlib -Wl,--gc-sections -Wl,--strip-all -static m.c -o m
+mu: m
+	upx --best m
