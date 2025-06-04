@@ -5,8 +5,8 @@ arch:
     tcc notok, wont fix
 
 lang
-    ops: +- >< ,. [] |
-                    man
+    ops: +- >< ,. []  ?     !
+                     man  reset
 
 build
     make
