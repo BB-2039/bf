@@ -10,6 +10,7 @@ lang
 
 build
     make
+    smallest-size: upx --best m
 
 src
     _.h => abbreviation
